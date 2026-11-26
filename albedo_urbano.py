@@ -1,6 +1,6 @@
 """
 Calcula o albedo medio de uma area urbana.
-Uso: python albedo_urbano.py imagem.bmp dados_inmet.csv
+Uso: python albedo_urbano.py area_urbana.bmp dados_inmet.csv
 """
 
 import struct
@@ -146,6 +146,9 @@ def ler_radiacao_inmet(caminho_csv, delimitador=";"):
 
 
 def calcular_albedo_estimado(albedo_visual, radiacao_incidente_media):
+    if radiacao_incidente_media == 0:
+        raise ValueError("Radiacao incidente nao pode ser zero.")
+    
     radiacao_refletida_estimada = radiacao_incidente_media * albedo_visual
     albedo_estimado = radiacao_refletida_estimada / radiacao_incidente_media
     return albedo_estimado, radiacao_refletida_estimada
@@ -158,8 +161,10 @@ def calcular_albedo_real(radiacao_refletida_medida, radiacao_incidente_medida):
 
 
 def main():
-    caminho_bmp = "area_urbana.bmp"
-    caminho_csv_inmet = "dados_inmet.csv"
+    pasta = os.path.dirname(os.path.abspath(__file__))
+
+    caminho_bmp = os.path.join(pasta, "area_urbana.bmp")
+    caminho_csv_inmet = os.path.join(pasta, "dados_inmet.csv")
 
     if len(sys.argv) >= 3:
         caminho_bmp = sys.argv[1]
@@ -189,9 +194,11 @@ def main():
 
     print("\n===== RESULTADO =====")
     print("Albedo visual (indice da imagem):       %.4f" % albedo_visual)
-    print("Radiacao incidente media (INMET):       %.2f Kj/m2" % radiacao_media)
-    print("Radiacao refletida estimada:            %.2f Kj/m2" % radiacao_refletida_estimada)
+    print("Radiacao incidente media (INMET):       %.2f Kj/m²" % radiacao_media)
+    print("Radiacao refletida estimada:            %.2f Kj/m²" % radiacao_refletida_estimada)
+    print("Albedo estimado:                        %.4f" % albedo_estimado)
 
+    input("\nPressione ENTER para fechar...")
 
 if __name__ == "__main__":
     main()
